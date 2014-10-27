@@ -26,7 +26,7 @@ int melody[] = {
 int noteDurations[] = {
   8,8};
 int trigger_value; // pressure reading threshold for identifying a bike is pressing.
-int threshold = 2; //change this amount if necessary. tunes sensitivity.
+int threshold = 1; //change this amount if necessary. tunes sensitivity.
 int the_tally; //total amount of sensings.
 int incomingByte = 0;   // for incoming serial data
 int the_time_offset; // in case of power out, it starts counting time from when the power went out.
@@ -175,7 +175,8 @@ void loop() {
 
 
 void print_memory() {
-  //raw_print_memory();
+  raw_print_memory();
+  print_JSON();
   if (the_tally > 0) {
     Serial.println("");
     Serial.println("Count , Time (Minutes) , Speed (km/h)");
@@ -212,6 +213,25 @@ void print_memory() {
     Serial.println(all_speed/the_tally);
   }
   Serial.println("___________________________________________________");
+}
+
+void print_JSON(){
+  Serial.print("{\n");
+  Serial.print("\"note\":\"Add a note here\",\n");
+  // print the count, don't know how to string coerce or concatenate in this version of JAVA
+    Serial.print("\"count\":\"");
+    Serial.print(the_tally);
+    Serial.print("\",\n");
+  // print times
+  Serial.print("\"start_time\":\"\",\n");
+  Serial.print("\"end_time\":\"\",\n");
+  // print data
+  Serial.print("\"data\":[");
+    // actually print comma-seperate values
+  Serial.print("]\n");
+
+  Serial.println("}");
+
 }
 
 
