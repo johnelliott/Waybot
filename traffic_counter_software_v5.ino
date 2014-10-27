@@ -126,7 +126,7 @@ void loop() {
     Serial.print("Current Count = ");
     Serial.println(the_tally);
     // Write the configuration struct to EEPROM
-    EEPROM_writeAnything(0, the_tally); //puts the value of x at the 0 address.
+    // EEPROM_writeAnything(0, the_tally); //puts the value of x at the 0 address.
     //Serial.print("time between wheels = ");
     wheel_time = ((second_wheel - first_wheel)/3600000);
     //Serial.println(wheel_time);
@@ -156,7 +156,7 @@ void loop() {
     // read the incoming byte:
     incomingByte = Serial.read();
     if (incomingByte == '1') {
-      print_memory();
+      print_JSON();
     }
     if (incomingByte == '2') {
       Serial.println("");
@@ -168,54 +168,54 @@ void loop() {
     }
     if (incomingByte == 'Y' || incomingByte == 'y') {
       erase_memory();  
-      print_memory();
+      print_JSON();
     }
   }
 }
 
 
-void print_memory() {
-  raw_print_memory();
-  print_JSON();
-  if (the_tally > 0) {
-    Serial.println("");
-    Serial.println("Count , Time (Minutes) , Speed (km/h)");
-    for (int i=1; i<= the_tally; i++){
-      Serial.print(i);
-      Serial.print(" , ");
-      long y = EEPROM.read(2*i);
-      Serial.print(y);
-      Serial.print(" , ");
-      long z = EEPROM.read((2*i)+1);
-      Serial.println(z); 
-      all_speed = (all_speed+z); //add all the speeds together to find average.
-      latest_minute = y;    
-    }
-  }
+// void print_memory() {
+//   // raw_print_memory();
+//   if (the_tally > 0) {
+//     Serial.println("");
+//     Serial.println("Count , Time (Minutes) , Speed (km/h)");
+//     for (int i=1; i<= the_tally; i++){
+//       Serial.print(i);
+//       Serial.print(" , ");
+//       long y = EEPROM.read(2*i);
+//       Serial.print(y);
+//       Serial.print(" , ");
+//       long z = EEPROM.read((2*i)+1);
+//       Serial.println(z); 
+//       all_speed = (all_speed+z); //add all the speeds together to find average.
+//       latest_minute = y;    
+//     }
+//   }
 
-  Serial.println(""); 
-  Serial.print("Total Cars, ");
-  Serial.println(the_tally);//read memory
-  Serial.print("Total Minutes Measured, ");
-  Serial.println(latest_minute);
-  Serial.print("Traffic Rate (cars per min), ");
-  if ((the_tally/latest_minute) <= 0) {
-    Serial.println("0");
-  }
-  else {
-    Serial.println(the_tally/latest_minute);
-  }
-  Serial.print("Average Car Speed (km per hour), ");
-  if ((all_speed/the_tally) <= 0) {
-    Serial.println("0");
-  }
-  else {
-    Serial.println(all_speed/the_tally);
-  }
-  Serial.println("___________________________________________________");
-}
+//   Serial.println(""); 
+//   Serial.print("Total Cars, ");
+//   Serial.println(the_tally);//read memory
+//   Serial.print("Total Minutes Measured, ");
+//   Serial.println(latest_minute);
+//   Serial.print("Traffic Rate (cars per min), ");
+//   if ((the_tally/latest_minute) <= 0) {
+//     Serial.println("0");
+//   }
+//   else {
+//     Serial.println(the_tally/latest_minute);
+//   }
+//   Serial.print("Average Car Speed (km per hour), ");
+//   if ((all_speed/the_tally) <= 0) {
+//     Serial.println("0");
+//   }
+//   else {
+//     Serial.println(all_speed/the_tally);
+//   }
+//   Serial.println("___________________________________________________");
+// }
 
 void print_JSON(){
+  Serial.print("GET SOME JSON:\n\n");
   Serial.print("{\n");
   Serial.print("\"note\":\"Add a note here\",\n");
   // print the count, don't know how to string coerce or concatenate in this version of JAVA
@@ -227,9 +227,23 @@ void print_JSON(){
   Serial.print("\"end_time\":\"\",\n");
   // print data
   Serial.print("\"data\":[");
-    // actually print comma-seperate values
+    // actually print comma-seperate values here to get the full data structure
+    if (the_tally > 0) {
+      for (int i=1; i<= the_tally; i++){
+        // Serial.print(i);
+        // Serial.print(" , ");
+        long y = EEPROM.read(2*i);
+        Serial.print(y);
+        if(i<the_tally){
+          Serial.print(", ");
+        }
+        // long z = EEPROM.read((2*i)+1);
+        // Serial.println(z); 
+        // all_speed = (all_speed+z); //add all the speeds together to find average.
+        // latest_minute = y;
+      }
+    }
   Serial.print("]\n");
-
   Serial.println("}");
 
 }
