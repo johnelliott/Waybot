@@ -72,7 +72,7 @@ void setup() {
   // Serial.println("ENTER 1 TO PRINT MEMORY");
   // Serial.println("ENTER 2 TO ERASE MEMORY");
   // Serial.println("___________________________________________________");
-  print_message("Traffic counter started. Local Air Pressure: " + trigger_value - threshold );
+  print_message("Loc air pressure: " + trigger_value - threshold );
 }
 
 void loop() {
@@ -208,12 +208,11 @@ void loop() {
 
 
 void print_message(String message){
-  Serial.print("{'message':'" + message + "'}");
+  Serial.println("{'message':'" + message + "'}");
 }
 
 void print_hit(int hit_time, int hit_speed){
-
-  Serial.print("{'time':'" + String(hit_time) + "', 'speed':'" + String(hit_speed) + "'}");
+  Serial.println("{'time':'" + String(hit_time) + "', 'speed':'" + String(hit_speed) + "'}");
 }
 
 // void print_run(){
