@@ -212,7 +212,7 @@ void print_message(String message){
 }
 
 void print_hit(int hit_time, int hit_speed){
-  Serial.println("{\"time\":\"" + String(hit_time) + "\", \"speed\":\"" + String(hit_speed) + "\"}");
+  Serial.println("{\"time\":\"" + String(hit_time) + "\",\"speed\":\"" + String(hit_speed) + "\"}");
 }
 
 // void print_run(){
