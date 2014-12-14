@@ -15,16 +15,8 @@
 
 #include <EEPROM.h>
 #include "EEPROMAnything.h"
-#define NOTE_C6  1047
-#define NOTE_E6  1319
-#define NOTE_G6  1568
 #define MEM_SIZE 512 //EEPROM memory size (remaining 2 bytes reserved for count)
 
-// notes in the melody:
-int melody[] = {
-  NOTE_C6, NOTE_G6};
-int noteDurations[] = {
-  8,8};
 int trigger_value; // pressure reading threshold for identifying a bike is pressing.
 int threshold = 1; //change this amount if necessary. tunes sensitivity.
 int the_tally; //total amount of sensings.
@@ -38,7 +30,7 @@ int the_max = 0;
 int is_measuring = 0;
 int count_this = 0;
 int strike_number = 0;
-float wheel_spacing = 2.7500; //average spacing between wheels of car (METERS)
+float wheel_spacing = 1.7500; //average spacing between wheels of car (METERS)
 float first_wheel = 0.0000000;
 float second_wheel= 0.0000000;
 float wheel_time = 0.0000000;
@@ -49,52 +41,54 @@ int all_speed;
 
 
 void setup() {
+
+  // set up pins
   pinMode(A0, INPUT);
   pinMode(2, OUTPUT);
   pinMode(13, OUTPUT);
+
+  // start serial port
   Serial.begin(9600);
-  // make_tone();
-  //update the tally variable from memory:
+
+  // update the tally variable from memory:
   EEPROM_readAnything(0,  the_tally); //the tally is stored in position 0. assigns the read value to 'the_tally'.
   EEPROM_readAnything((the_tally*2)+1, the_time_offset); //read the last time entry
 
   if (the_tally < 0) { //for formatting the EEPROM for a new device.
     erase_memory(); 
   }
+
   // read local air pressure and create offset.
   trigger_value = analogRead(A0) + threshold;
   delay(1000);
-  Serial.println("Hello, Welcome to the DIY Traffic Counter");
-  Serial.println("Developed by Tomorrow Lab in NYC");
-  Serial.println("___________________________________________________");
-  Serial.println("");
-  Serial.print("Local Air Pressure: ");
-  Serial.println(trigger_value - threshold);
-  Serial.println("___________________________________________________");
-  Serial.println("");
-  Serial.println("ENTER 1 TO PRINT MEMORY");
-  Serial.println("ENTER 2 TO ERASE MEMORY");
-  Serial.println("___________________________________________________");
-
-
+  // Serial.println("Hello, Welcome to the DIY Traffic Counter");
+  // Serial.println("Developed by Tomorrow Lab in NYC");
+  // Serial.println("___________________________________________________");
+  // Serial.println("");
+  // Serial.print("Local Air Pressure: ");
+  // Serial.println(trigger_value - threshold);
+  // Serial.println("___________________________________________________");
+  // Serial.println("");
+  // Serial.println("ENTER 1 TO PRINT MEMORY");
+  // Serial.println("ENTER 2 TO ERASE MEMORY");
+  // Serial.println("___________________________________________________");
+  print_message("Traffic counter started. Local Air Pressure: " + trigger_value - threshold );
 }
 
 void loop() {
-  //Serial.println(analogRead(A0));
-
   //1 - TUBE IS PRESSURIZED INITIALLY
   if (analogRead(A0) > trigger_value) {
     if (strike_number == 0 && is_measuring == 0) { // FIRST HIT
-      Serial.println("");
-      Serial.println("Car HERE. ");
+      // Serial.println("");
+      // Serial.println("Car HERE. ");
       first_wheel = millis(); 
       is_measuring = 1;
     }
     if (strike_number == 1 && is_measuring == 1) { // SECOND HIT
-      Serial.println("Car GONE.");
+      // Serial.println("Car GONE.");
       second_wheel = millis();
       is_measuring = 0;
-    }
+    } 
   }
 
 
@@ -117,14 +111,13 @@ void loop() {
 
   //4 - PRESSURE READING IS ACCEPTED AND RECORDED
   if ((analogRead(A0) < trigger_value - 1) && ((count_this == 1 && is_measuring == 0) || ((millis() - first_wheel) > car_timeout) && is_measuring == 1)) { //has been released for enough time.
-    make_tone(); //will buzz if buzzer attached, also LED on pin 13 will flash.
     the_tally++; 
     time_slot = the_tally*2;
     speed_slot = (the_tally*2)+1;
-    Serial.print("Pressure Reached = ");
-    Serial.println(the_max);
-    Serial.print("Current Count = ");
-    Serial.println(the_tally);
+    // Serial.print("Pressure Reached = ");
+    // Serial.println(the_max);
+    // Serial.print("Current Count = ");
+    // Serial.println(the_tally);
     // Write the configuration struct to EEPROM
     // EEPROM_writeAnything(0, the_tally); //puts the value of x at the 0 address.
     //Serial.print("time between wheels = ");
@@ -134,13 +127,12 @@ void loop() {
     EEPROM_writeAnything(time_slot, time); //puts the value of y at address 'the_tally'.
     the_speed = (wheel_spacing/1000)/wheel_time;
     if (the_speed > 0 ) {
-      Serial.print("Estimated Speed (km/h) = ");
-      Serial.println(the_speed);
       EEPROM_writeAnything(speed_slot, int(the_speed)); //puts the value of y at address 'the_tally'.
+      print_hit(time, the_speed);
     }
     else {
-      Serial.println("Speed not measureable");
       EEPROM_writeAnything(speed_slot, 0); //puts the value of y at address 'the_tally'.
+      print_hit(time, 0);
     }
 
     //RESET ALL VALUES
@@ -214,6 +206,20 @@ void loop() {
 //   Serial.println("___________________________________________________");
 // }
 
+
+void print_message(String message){
+  Serial.print("{'message':'" + message + "'}");
+}
+
+void print_hit(int hit_time, int hit_speed){
+
+  Serial.print("{'time':'" + String(hit_time) + "', 'speed':'" + String(hit_speed) + "'}");
+}
+
+// void print_run(){
+//   Serial.print("{'start_time':'" + 0 + "', 'end_time':'" + hit_speed + "'}");
+// }
+
 void print_JSON(){
   Serial.print("GET SOME JSON:\n\n");
   Serial.print("{\n");
@@ -226,7 +232,7 @@ void print_JSON(){
   Serial.print("\"start_time\":\"\",\n");
   Serial.print("\"end_time\":\"\",\n");
   // print data
-  Serial.print("\"data\":[");
+  Serial.print("\"hit_minutes\":[");
     // actually print comma-seperate values here to get the full data structure
     if (the_tally > 0) {
       for (int i=1; i<= the_tally; i++){
@@ -244,7 +250,7 @@ void print_JSON(){
       }
     }
   Serial.print("]\n");
-  Serial.println("}");
+  Serial.println("}\n\n");
 
 }
 
@@ -275,26 +281,5 @@ void erase_memory() {
   the_time_offset = 0;
   latest_minute = 0;
 }
-
-
-
-void make_tone() {
-  for (int thisNote = 0; thisNote < 2; thisNote++) {
-
-    //to calculate the note duration, take one second 
-    //divided by the note type.
-    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
-    int noteDuration = 1000/noteDurations[thisNote];
-    tone(13, melody[thisNote],noteDuration);
-
-    //to distinguish the notes, set a minimum time between them.
-    //the note's duration + 30% seems to work well:
-    int pauseBetweenNotes = noteDuration * 1.30;
-    delay(pauseBetweenNotes);
-    //stop the tone playing:
-    noTone(13);
-  }
-}
-
 
 
