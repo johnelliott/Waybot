@@ -151,14 +151,6 @@ void loop() {
       print_JSON();
     }
     if (incomingByte == '2') {
-      Serial.println("");
-      Serial.println("ARE YOU SURE YOU WANT TO ERASE THE MEMORY? Enter Y/N");
-    }
-    if (incomingByte == 'N' || incomingByte == 'n') {
-      Serial.println("MEMORY ERASE CANCELLED");
-      Serial.println("___________________________________________________");
-    }
-    if (incomingByte == 'Y' || incomingByte == 'y') {
       erase_memory();  
       print_JSON();
     }
