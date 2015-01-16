@@ -1,18 +1,19 @@
 /***************************************************************
- * 
+ *
  * Do-It-Yourself TRAFFIC COUNTER
  * Developed by Tomorrow Lab in NYC 2012
  * Developer: Ted Ullricis_measuringh <ted@tomorrow-lab.com>
  * http://tomorrow-lab.com
- * 
+ *
  * Materials List:
  * http://bit.ly/OqVIgj
- * 
+ *
  * This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * Please include credit to Tomorrow Lab in all future versions.
- * 
+ *
  ***************************************************************/
 
+#include <ArduinoJson.h>
 #include <EEPROM.h>
 #include "EEPROMAnything.h"
 #define MEM_SIZE 512 //EEPROM memory size (remaining 2 bytes reserved for count)
@@ -38,7 +39,8 @@ float the_speed = 0.0000000;
 int time_slot;
 int speed_slot;
 int all_speed;
-
+StaticJsonBuffer<200> jsonBuffer;
+JsonObject& root = jsonBuffer.createObject();
 
 void setup() {
 
@@ -55,8 +57,12 @@ void setup() {
   EEPROM_readAnything((the_tally*2)+1, the_time_offset); //read the last time entry
 
   if (the_tally < 0) { //for formatting the EEPROM for a new device.
-    erase_memory(); 
+    erase_memory();
   }
+
+
+  // establish which counter we'll use in json structure
+  root["counter_id"] = "1";
 
   // read local air pressure and create offset.
   trigger_value = analogRead(A0) + threshold;
@@ -72,7 +78,7 @@ void setup() {
   // Serial.println("ENTER 1 TO PRINT MEMORY");
   // Serial.println("ENTER 2 TO ERASE MEMORY");
   // Serial.println("___________________________________________________");
-  print_message("Loc air pressure: " + (trigger_value - threshold) );
+  //print_message("Loc air pressure: " + (trigger_value - threshold) );
 }
 
 void loop() {
@@ -81,20 +87,20 @@ void loop() {
     if (strike_number == 0 && is_measuring == 0) { // FIRST HIT
       // Serial.println("");
       // Serial.println("Car HERE. ");
-      first_wheel = millis(); 
+      first_wheel = millis();
       is_measuring = 1;
     }
     if (strike_number == 1 && is_measuring == 1) { // SECOND HIT
       // Serial.println("Car GONE.");
       second_wheel = millis();
       is_measuring = 0;
-    } 
+    }
   }
 
 
   //2 - TUBE IS STILL PRESSURIZED
   while(analogRead(A0) > the_max && is_measuring == 1) { //is being pressed, in all cases. to measure the max pressure.
-    the_max = analogRead(A0); 
+    the_max = analogRead(A0);
   }
 
 
@@ -111,7 +117,7 @@ void loop() {
 
   //4 - PRESSURE READING IS ACCEPTED AND RECORDED
   if ((analogRead(A0) < trigger_value - 1) && ((count_this == 1 && is_measuring == 0) || ((millis() - first_wheel) > car_timeout) && is_measuring == 1)) { //has been released for enough time.
-    the_tally++; 
+    the_tally++;
     time_slot = the_tally*2;
     speed_slot = (the_tally*2)+1;
     // Serial.print("Pressure Reached = ");
@@ -123,7 +129,7 @@ void loop() {
     //Serial.print("time between wheels = ");
     wheel_time = ((second_wheel - first_wheel)/3600000);
     //Serial.println(wheel_time);
-    int time = ((millis()/1000)/60) + the_time_offset + 1; // the number of seconds since first record.
+    int time = (millis()/1000) + the_time_offset + 1; // the number of seconds since first record.
     EEPROM_writeAnything(time_slot, time); //puts the value of y at address 'the_tally'.
     the_speed = (wheel_spacing/1000)/wheel_time;
     if (the_speed > 0 ) {
@@ -136,7 +142,7 @@ void loop() {
     }
 
     //RESET ALL VALUES
-    the_max = 0; 
+    the_max = 0;
     strike_number = 0;
     count_this = 0;
     is_measuring = 0;
@@ -148,102 +154,77 @@ void loop() {
     // read the incoming byte:
     incomingByte = Serial.read();
     if (incomingByte == '1') {
-      print_JSON();
+      print_memory();
     }
     if (incomingByte == '2') {
-      erase_memory();  
-      print_JSON();
+      erase_memory();
     }
   }
 }
-
-
-// void print_memory() {
-//   // raw_print_memory();
-//   if (the_tally > 0) {
-//     Serial.println("");
-//     Serial.println("Count , Time (Minutes) , Speed (km/h)");
-//     for (int i=1; i<= the_tally; i++){
-//       Serial.print(i);
-//       Serial.print(" , ");
-//       long y = EEPROM.read(2*i);
-//       Serial.print(y);
-//       Serial.print(" , ");
-//       long z = EEPROM.read((2*i)+1);
-//       Serial.println(z); 
-//       all_speed = (all_speed+z); //add all the speeds together to find average.
-//       latest_minute = y;    
-//     }
-//   }
-
-//   Serial.println(""); 
-//   Serial.print("Total Cars, ");
-//   Serial.println(the_tally);//read memory
-//   Serial.print("Total Minutes Measured, ");
-//   Serial.println(latest_minute);
-//   Serial.print("Traffic Rate (cars per min), ");
-//   if ((the_tally/latest_minute) <= 0) {
-//     Serial.println("0");
-//   }
-//   else {
-//     Serial.println(the_tally/latest_minute);
-//   }
-//   Serial.print("Average Car Speed (km per hour), ");
-//   if ((all_speed/the_tally) <= 0) {
-//     Serial.println("0");
-//   }
-//   else {
-//     Serial.println(all_speed/the_tally);
-//   }
-//   Serial.println("___________________________________________________");
-// }
-
 
 void print_message(String message){
   Serial.println("{\"message\":\"" + message + "\"}");
 }
 
 void print_hit(int hit_time, int hit_speed){
-  Serial.println("{\"time\":" + String(hit_time) + ",\"speed\":" + String(hit_speed) + "}");
+  JsonObject& hit = root.createNestedObject("hit");
+  hit["time"] = hit_time;
+  hit["speed"] = hit_speed;
+  root.printTo(Serial);
+  // make this work with readline parser
+  Serial.print("\n");
 }
 
-// void print_run(){
-//   Serial.print("{'start_time':'" + 0 + "', 'end_time':'" + hit_speed + "'}");
-// }
-
-void print_JSON(){
-  Serial.print("GET SOME JSON:\n\n");
-  Serial.print("{\n");
-  Serial.print("\"note\":\"Add a note here\",\n");
-  // print the count, don't know how to string coerce or concatenate in this version of JAVA
-    Serial.print("\"count\":\"");
-    Serial.print(the_tally);
-    Serial.print("\",\n");
-  // print times
-  Serial.print("\"start_time\":\"\",\n");
-  Serial.print("\"end_time\":\"\",\n");
-  // print data
-  Serial.print("\"hit_minutes\":[");
-    // actually print comma-seperate values here to get the full data structure
-    if (the_tally > 0) {
-      for (int i=1; i<= the_tally; i++){
-        // Serial.print(i);
-        // Serial.print(" , ");
-        long y = EEPROM.read(2*i);
-        Serial.print(y);
-        if(i<the_tally){
-          Serial.print(", ");
-        }
-        // long z = EEPROM.read((2*i)+1);
-        // Serial.println(z); 
-        // all_speed = (all_speed+z); //add all the speeds together to find average.
-        // latest_minute = y;
-      }
+void print_memory(){
+  JsonObject& dump = root.createNestedObject("hit");
+  dump["tally"] = the_tally;
+  JsonArray& hits = dump.createNestedArray("hits");
+  if (the_tally > 0) {
+    for (int i=1; i<= the_tally; i++){
+      // Serial.print(i);
+      // Serial.print(" , ");
+      long y = EEPROM.read(2*i);
+      hits.add(y);
     }
-  Serial.print("]\n");
-  Serial.println("}\n\n");
-
+  }
+  root.printTo(Serial);
+  // make this work with readline parser
+  Serial.print("\n");
 }
+
+//void print_JSON(){
+//  Serial.print("GET SOME JSON:\n\n");
+//  Serial.print("{\n");
+//  Serial.print("\"note\":\"Add a note here\",\n");
+//  // print the count, don't know how to string coerce or concatenate in this version of JAVA
+//    Serial.print("\"count\":\"");
+//    Serial.print(the_tally);
+//    Serial.print("\",\n");
+//  // print times
+//  Serial.print("\"start_time\":\"\",\n");
+//  Serial.print("\"end_time\":\"\",\n");
+//  // print data
+//  Serial.print("\"hit_minutes\":[");
+//    // actually print comma-seperate values here to get the full data structure
+//    if (the_tally > 0) {
+//      for (int i=1; i<= the_tally; i++){
+//        // Serial.print(i);
+//        // Serial.print(" , ");
+//        long y = EEPROM.read(2*i);
+//        Serial.print(y);
+//        if(i<the_tally){
+//          Serial.print(", ");
+//        }
+//        // long z = EEPROM.read((2*i)+1);
+//        // Serial.println(z);
+//        // all_speed = (all_speed+z); //add all the speeds together to find average.
+//        // latest_minute = y;
+//      }
+//    }
+//  Serial.print("]\n");
+//  Serial.println("}\n\n");
+//
+//}
 
 
 void raw_print_memory(){
@@ -267,10 +248,11 @@ void erase_memory() {
   Serial.println("ERASING MEMORY ...");
   for (int i = 0; i <= MEM_SIZE; i++){
     EEPROM.write(i, 0);
-  }  
-  the_tally = 0; 
+  }
+  the_tally = 0;
   the_time_offset = 0;
   latest_minute = 0;
+  JsonObject& root = jsonBuffer.createObject();
 }
 
 
