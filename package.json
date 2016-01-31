@@ -1,0 +1,21 @@
+{
+  "name": "wb-uploader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": "5.5.0"
+  },
+  "dependencies": {
+    "serialport": "^2.0.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "local": "SERIALPORT='/dev/ttys001' nodemon index.js",
+    "dbg": "SERIALPORT='/dev/ttys001' node debug index.js"
+  },
+  "author": "johnelliott",
+  "license": "MIT"
+}
