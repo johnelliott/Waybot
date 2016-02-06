@@ -9,26 +9,35 @@
 require("./config");
 // Default to Ras. Pi USB
 var localSerialPort = process.env.SERIALPORT || "/dev/ttyACM0";
-var Counter = require("./lib/counter");
-var counter = new Counter(localSerialPort);
-
-// here are the http methods I'd like
-// /api/counter/*/start
-// /api/counter/*/stop
-// /api/counter/*/reset
-// does this thing need its own rest api?
 var http = require('http');
+var Counter = require("./lib/counter");
+
+var counter = new Counter(localSerialPort, function heyyo (data) {
+    console.log("eayyyy", data);
+});
 
 var server = http.createServer((req, res) => {
-  if (req.url === '/get') {
-    var counterData = counter.getJSON();
-    // TODO the problem here is I can't catch the JSON
+  if (req.method === 'GET') {
+      counter.getJSON(function getHandler(err, data) {
+        if (err) {
+            res.writeHead(503);
+            res.end('error');
+        }
+        res.writeHead(200);
+        res.end(JSON.stringify(data));
+      });
+  } else if (req.method === 'DELETE') {
+    counter.reset(function resetHandler(err, data) {
+        if (err) {
+            res.writeHead(200);
+            res.end('error');
+        }
+        res.writeHead(200);
+        res.end(JSON.stringify(data));
+    });
+  } else {
     res.writeHead(200);
-    res.end('hello world', counterData);
-  }
-  else {
-    res.writeHead(200);
-    res.end('what route is this');
+    res.end('what method is this');
   }
 });
 
