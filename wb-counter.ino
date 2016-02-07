@@ -18,6 +18,7 @@
 #include "EEPROMAnything.h"
 #define MEM_SIZE 512 //EEPROM memory size (remaining 2 bytes reserved for count)
 
+int counter_id = 1; // serial number of the counter
 int trigger_value; // pressure reading threshold for identifying a bike is pressing.
 int threshold = 1; //change this amount if necessary. tunes sensitivity.
 int the_tally; //total amount of sensings.
@@ -155,7 +156,7 @@ void print_hit(int hit_time, int hit_speed){
   StaticJsonBuffer<200> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
   // establish which counter we'll use in json structure
-  root["counter_id"] = "1";
+  root["counter_id"] = counter_id;
   JsonObject& hit = root.createNestedObject("hit");
   hit["time"] = hit_time;
   hit["speed"] = hit_speed;
@@ -165,10 +166,10 @@ void print_hit(int hit_time, int hit_speed){
 }
 
 void print_memory(){
-  StaticJsonBuffer<200> jsonBuffer;
+  StaticJsonBuffer<400> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
   // establish which counter we'll use in json structure
-  root["counter_id"] = "1";
+  root["counter_id"] = counter_id;
   root["tally"] = the_tally;
   JsonArray& hits = root.createNestedArray("hits");
   if (the_tally > 0) {
