@@ -23,6 +23,7 @@ int threshold = 1; //change this amount if necessary. tunes sensitivity.
 int the_tally; //total amount of sensings.
 int incomingByte = 0;   // for incoming serial data
 int the_time_offset; // in case of power out, it starts counting time from when the power went out.
+// TODO see if I am using latest_minute
 int latest_minute;
 int the_wheel_delay = 50; //number of milliseconds to create accurate readings for cars. prevents bounce.
 int car_timeout = 3000;
@@ -39,8 +40,6 @@ float the_speed = 0.0000000;
 int time_slot;
 int speed_slot;
 int all_speed;
-StaticJsonBuffer<200> jsonBuffer;
-JsonObject& root = jsonBuffer.createObject();
 
 void setup() {
 
@@ -61,24 +60,10 @@ void setup() {
   }
 
 
-  // establish which counter we'll use in json structure
-  root["counter_id"] = "1";
 
   // read local air pressure and create offset.
   trigger_value = analogRead(A0) + threshold;
   delay(1000);
-  // Serial.println("Hello, Welcome to the DIY Traffic Counter");
-  // Serial.println("Developed by Tomorrow Lab in NYC");
-  // Serial.println("___________________________________________________");
-  // Serial.println("");
-  // Serial.print("Local Air Pressure: ");
-  // Serial.println(trigger_value - threshold);
-  // Serial.println("___________________________________________________");
-  // Serial.println("");
-  // Serial.println("ENTER 1 TO PRINT MEMORY");
-  // Serial.println("ENTER 2 TO ERASE MEMORY");
-  // Serial.println("___________________________________________________");
-  //print_message("Loc air pressure: " + (trigger_value - threshold) );
 }
 
 void loop() {
@@ -167,6 +152,10 @@ void print_message(String message){
 }
 
 void print_hit(int hit_time, int hit_speed){
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+  // establish which counter we'll use in json structure
+  root["counter_id"] = "1";
   JsonObject& hit = root.createNestedObject("hit");
   hit["time"] = hit_time;
   hit["speed"] = hit_speed;
@@ -176,15 +165,20 @@ void print_hit(int hit_time, int hit_speed){
 }
 
 void print_memory(){
-  JsonObject& dump = root.createNestedObject("hit");
-  dump["tally"] = the_tally;
-  JsonArray& hits = dump.createNestedArray("hits");
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+  // establish which counter we'll use in json structure
+  root["counter_id"] = "1";
+  root["tally"] = the_tally;
+  JsonArray& hits = root.createNestedArray("hits");
   if (the_tally > 0) {
-    for (int i=1; i<= the_tally; i++){
-      // Serial.print(i);
-      // Serial.print(" , ");
-      long y = EEPROM.read(2*i);
-      hits.add(y);
+    for (int i=1; i<= the_tally; i++) {
+      long time = EEPROM.read(2*i);
+      // TODO could speed be an int?
+      long speed = EEPROM.read((2*i)+1);
+      JsonObject& hit = hits.createNestedObject();
+      hit["time"] = time;
+      hit["speed"] = speed;
     }
   }
   root.printTo(Serial);
@@ -252,7 +246,6 @@ void erase_memory() {
   the_tally = 0;
   the_time_offset = 0;
   latest_minute = 0;
-  JsonObject& root = jsonBuffer.createObject();
 }
 
 
