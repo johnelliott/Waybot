@@ -16,13 +16,8 @@ var counter = new Counter(localSerialPort, function counterCallback (err, data) 
     if (err) {
         console.log('Error', err);
     }
-    try {
-        var jsonData = JSON.parse(data);
-        console.log('JSON data', data);
-    }
-    catch (err) {
-        console.log('Error parsing data', err);
-    }
+    console.log('Data', data);
+
 });
 
 var server = http.createServer((req, res) => {
