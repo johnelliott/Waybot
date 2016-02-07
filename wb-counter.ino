@@ -186,41 +186,6 @@ void print_memory(){
   Serial.print("\n");
 }
 
-//void print_JSON(){
-//  Serial.print("GET SOME JSON:\n\n");
-//  Serial.print("{\n");
-//  Serial.print("\"note\":\"Add a note here\",\n");
-//  // print the count, don't know how to string coerce or concatenate in this version of JAVA
-//    Serial.print("\"count\":\"");
-//    Serial.print(the_tally);
-//    Serial.print("\",\n");
-//  // print times
-//  Serial.print("\"start_time\":\"\",\n");
-//  Serial.print("\"end_time\":\"\",\n");
-//  // print data
-//  Serial.print("\"hit_minutes\":[");
-//    // actually print comma-seperate values here to get the full data structure
-//    if (the_tally > 0) {
-//      for (int i=1; i<= the_tally; i++){
-//        // Serial.print(i);
-//        // Serial.print(" , ");
-//        long y = EEPROM.read(2*i);
-//        Serial.print(y);
-//        if(i<the_tally){
-//          Serial.print(", ");
-//        }
-//        // long z = EEPROM.read((2*i)+1);
-//        // Serial.println(z);
-//        // all_speed = (all_speed+z); //add all the speeds together to find average.
-//        // latest_minute = y;
-//      }
-//    }
-//  Serial.print("]\n");
-//  Serial.println("}\n\n");
-//
-//}
-
-
 void raw_print_memory(){
 
   Serial.println("EEPROM REPORT: ");
