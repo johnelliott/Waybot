@@ -12,8 +12,17 @@ var localSerialPort = process.env.SERIALPORT || "/dev/ttyACM0";
 var http = require('http');
 var Counter = require("./lib/counter");
 
-var counter = new Counter(localSerialPort, function heyyo (data) {
-    console.log("eayyyy", data);
+var counter = new Counter(localSerialPort, function counterCallback (err, data) {
+    if (err) {
+        console.log('Error', err);
+    }
+    try {
+        var jsonData = JSON.parse(data);
+        console.log('JSON data', data);
+    }
+    catch (err) {
+        console.log('Error parsing data', err);
+    }
 });
 
 var server = http.createServer((req, res) => {
@@ -21,7 +30,7 @@ var server = http.createServer((req, res) => {
       counter.getJSON(function getHandler(err, data) {
         if (err) {
             res.writeHead(503);
-            res.end('error');
+            res.end('Error');
         }
         res.writeHead(200);
         res.end(JSON.stringify(data));
@@ -30,16 +39,16 @@ var server = http.createServer((req, res) => {
     counter.reset(function resetHandler(err, data) {
         if (err) {
             res.writeHead(200);
-            res.end('error');
+            res.end('Error');
         }
         res.writeHead(200);
         res.end(JSON.stringify(data));
     });
   } else {
     res.writeHead(200);
-    res.end('what method is this');
+    res.end('What method is this');
   }
 });
 
 server.listen(3000);
-console.log('server lisening on 3000');
+console.log('Server lisening on 3000');
