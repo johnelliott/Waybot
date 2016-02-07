@@ -11,12 +11,15 @@ require("./config");
 var localSerialPort = process.env.SERIALPORT || "/dev/ttyACM0";
 var http = require('http');
 var Counter = require("./lib/counter");
+var upload = require("./lib/upload");
 
 var counter = new Counter(localSerialPort, function counterCallback (err, data) {
     if (err) {
         console.log('Error', err);
     }
     console.log('Data', data);
+    // No cache or db for now, just upload to server
+    upload(data);
 
 });
 
