@@ -7,6 +7,7 @@
 // but now I have reset and print-all, so I'll use those
 
 require("./config");
+var debug = require('debug')('wb-uploader');
 // Default to Ras. Pi USB
 var localSerialPort = process.env.SERIALPORT || "/dev/ttyACM0";
 var http = require('http');
@@ -15,9 +16,9 @@ var upload = require("./lib/upload");
 
 var counter = new Counter(localSerialPort, function counterCallback (err, data) {
     if (err) {
-        console.log('Error', err);
+        debug('Error', err);
     }
-    console.log('Data', data);
+    debug('Data', data);
     // No cache or db for now, just upload to server
     upload(data);
 
@@ -49,4 +50,4 @@ var server = http.createServer((req, res) => {
 });
 
 server.listen(3000);
-console.log('Server lisening on 3000');
+debug('Server lisening on 3000');
