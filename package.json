@@ -14,8 +14,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "local": "SERIALPORT='/dev/ttys001' nodemon index.js",
-    "dbg": "SERIALPORT='/dev/ttys001' node debug index.js"
+    "desk": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem14121' nodemon --debug index.js",
+    "dbg": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1411' nodemon --debug index.js"
   },
   "author": "johnelliott",
   "license": "MIT"
