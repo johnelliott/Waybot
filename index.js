@@ -33,7 +33,7 @@ var server = http.createServer((req, res) => {
             res.end('Error');
         }
         res.writeHead(200);
-        res.end(JSON.stringify(data));
+        res.end(data);
       });
   } else if (req.method === 'DELETE') {
     counter.reset(function resetHandler(err, data) {
@@ -42,7 +42,7 @@ var server = http.createServer((req, res) => {
             res.end('Error');
         }
         res.writeHead(200);
-        res.end(JSON.stringify(data));
+        res.end(data);
     });
   } else {
     res.writeHead(200);
