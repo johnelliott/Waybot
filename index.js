@@ -24,7 +24,7 @@ var counter = new Counter(localSerialPort, function counterCallback (err, data) 
 
 });
 
-var server = http.createServer((req, res) => {
+var server = http.createServer(function requestHandler (req, res) {
   if (req.method === 'GET') {
       counter.getJSON(function getHandler(err, data) {
         if (err) {
