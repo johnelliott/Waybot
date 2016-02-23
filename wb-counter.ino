@@ -17,6 +17,9 @@
 #include <EEPROM.h>
 #include "EEPROMAnything.h"
 #define MEM_SIZE 512 //EEPROM memory size (remaining 2 bytes reserved for count)
+#define NOTE_C6  1047
+#define NOTE_E6  1319
+#define NOTE_G6  1568
 
 int counter_id = 1; // serial number of the counter
 int trigger_value; // pressure reading threshold for identifying a bike is pressing.
@@ -41,13 +44,16 @@ float the_speed = 0.0000000;
 int time_slot;
 int speed_slot;
 int all_speed;
+// notes in the melody:
+int melody[] = {NOTE_C6, NOTE_G6};
+int noteDurations[] = {8,8};
 
 void setup() {
 
   // set up pins
   pinMode(A0, INPUT);
   pinMode(2, OUTPUT);
-  pinMode(13, OUTPUT);
+  pinMode(13, OUTPUT); //buzzer too
 
   // start serial port
   Serial.begin(9600);
@@ -103,6 +109,7 @@ void loop() {
 
   //4 - PRESSURE READING IS ACCEPTED AND RECORDED
   if ((analogRead(A0) < trigger_value - 1) && ((count_this == 1 && is_measuring == 0) || ((millis() - first_wheel) > car_timeout) && is_measuring == 1)) { //has been released for enough time.
+    make_tone(); //will buzz if buzzer attached, also LED on pin 13 will flash.
     the_tally++;
     time_slot = the_tally*2;
     speed_slot = (the_tally*2)+1;
@@ -214,4 +221,21 @@ void erase_memory() {
   latest_minute = 0;
 }
 
+void make_tone() {
+  for (int thisNote = 0; thisNote < 2; thisNote++) {
+
+    //to calculate the note duration, take one second
+    //divided by the note type.
+    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+    int noteDuration = 1000/noteDurations[thisNote];
+    tone(13, melody[thisNote],noteDuration);
+
+    //to distinguish the notes, set a minimum time between them.
+    //the note's duration + 30% seems to work well:
+    int pauseBetweenNotes = noteDuration * 1.30;
+    delay(pauseBetweenNotes);
+    //stop the tone playing:
+    noTone(13);
+  }
+}
 
