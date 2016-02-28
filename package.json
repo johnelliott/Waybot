@@ -14,6 +14,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
+    "pi": "DEBUG=wb-* SERIALPORT='/dev/ttyACM0' nodemon index.js",
     "desk": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1421' nodemon --debug-brk index.js",
     "ddb": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1421' nodemon --debug index.js",
     "dbs": "DEBUG=wb-* nodemon index.js",
