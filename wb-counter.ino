@@ -11,6 +11,8 @@
  * This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * Please include credit to Tomorrow Lab in all future versions.
  *
+ * I modified this to use JSON, among other changes - John Elliott
+ *
  ***************************************************************/
 
 #include <ArduinoJson.h>
