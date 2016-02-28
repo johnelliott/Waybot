@@ -7,7 +7,7 @@
 // but now I have reset and print-all, so I'll use those
 
 require("./config");
-var debug = require('debug')('wb-uploader');
+var debug = require('debug')('wb-uploader:index');
 // Default to Ras. Pi USB
 var localSerialPort = process.env.SERIALPORT || "/dev/ttyACM0";
 var http = require('http');
