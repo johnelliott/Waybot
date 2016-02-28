@@ -14,8 +14,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "desk": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem14121' nodemon --debug index.js",
-    "dbg": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1411' nodemon --debug index.js"
+    "desk": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1421' nodemon --debug-brk index.js",
+    "ddb": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1421' nodemon --debug index.js",
+    "dbs": "DEBUG=wb-* nodemon index.js",
+    "dbg": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1421' nodemon index.js"
   },
   "author": "johnelliott",
   "license": "MIT"
