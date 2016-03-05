@@ -1,0 +1,12 @@
+---
+# tasks file for wb-web
+- name: Install wb-web app
+  become: true
+  git: repo=https://github.com/johnelliott/wb-web.git dest={{ app_path }} version={{ app_version }}
+
+- name: Install npm packages
+  become: true
+  npm:
+    path: "{{ app_path }}"
+    executable: /home/{{ app_user }}/.nvm/versions/node/{{ node_version }}/bin/npm
+    ignore_scripts: yes
