@@ -2,3 +2,4 @@
 - hosts: cloud
   roles:
     -  nodejs
+    -  couch
