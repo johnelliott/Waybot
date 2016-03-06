@@ -2,3 +2,4 @@
 # vars file for wb-web
 app_path: /home/{{ app_user }}/wb-web
 app_version: master
+app_port: 8080 # Is this the place for this data?

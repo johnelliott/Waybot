@@ -30,3 +30,12 @@
     path: "{{ app_path }}/public"
     owner: root
 
+- name: create wb-web upstart template
+  # TODO un-hard-code the app_name wb-web
+  become: true
+  template: src=../templates/wb-web.conf dest=/etc/init/wb-web.conf # other args from helper: owner=bin group=wheel mode=0644
+
+- name: restart wb-web
+  become: true
+  service: name=wb-web state=reloaded
+  notify: restart wb-web
