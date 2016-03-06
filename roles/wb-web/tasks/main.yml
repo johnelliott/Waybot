@@ -10,3 +10,23 @@
     path: "{{ app_path }}"
     executable: /home/{{ app_user }}/.nvm/versions/node/{{ node_version }}/bin/npm
     ignore_scripts: yes
+
+# TODO find out how not to chown the public folder to get prod assets built
+- name: Chown public assets to app user
+  become: true
+  file:
+    path: "{{ app_path }}/public"
+    owner: "{{ app_user }}"
+
+- name: Build assets
+  become: true
+  become_user: "{{ app_user }}"
+  shell: /bin/bash -lc '/home/{{ app_user }}/.nvm/versions/node/{{ node_version }}/bin/npm run build' chdir={{ app_path }}
+
+# TODO find out how not to chown the public folder to get prod assets built
+- name: Chown public assets back to root
+  become: true
+  file:
+    path: "{{ app_path }}/public"
+    owner: root
+
