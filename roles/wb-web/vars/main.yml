@@ -1,5 +1,6 @@
 ---
 # vars file for wb-web
 app_path: /home/{{ app_user }}/wb-web
+node_user: ubuntu # TODO this is probalbly bad.. app user and node user are the same
 app_version: master
 app_port: 8080 # Is this the place for this data?

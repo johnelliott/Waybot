@@ -1,0 +1,5 @@
+---
+# handlers file for wb-upload
+- name: restart wb-upload
+  become: true
+  service: name=wb-upload state=restarted

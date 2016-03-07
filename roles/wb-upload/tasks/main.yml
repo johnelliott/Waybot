@@ -1,0 +1,52 @@
+---
+# tasks file for wb-upload
+- name: Install wb-upload app
+  become: true
+  git: repo=https://github.com/johnelliott/wb-upload.git dest={{ app_path }} version={{ app_version }}
+
+- name: Install npm packages
+  become: true
+  npm:
+    path: "{{ app_path }}"
+    executable: /home/{{ app_user }}/.nvm/versions/node/{{ node_version }}/bin/npm
+    ignore_scripts: yes
+
+  #- name: Build serialport for ARM pi, this is a hack
+  #  become: true
+  #  become_user: "{{ app_user }}"
+  #  #sudo -iu pi npm rebuild serialport --build-from-source
+  #  shell: /bin/bash -lc '/home/{{ app_user }}/.nvm/versions/node/{{ node_version }}/bin/npm rebuild serialport --build-from-source' chdir={{ app_path }}
+
+## TODO find out how not to chown the public folder to get prod assets built
+#- name: Chown public assets to app user
+#  become: true
+#  file:
+#    path: "{{ app_path }}/public"
+#    owner: "{{ app_user }}"
+#
+#- name: Build assets
+#  become: true
+#  become_user: "{{ app_user }}"
+#  shell: /bin/bash -lc '/home/{{ app_user }}/.nvm/versions/node/{{ node_version }}/bin/npm run build' chdir={{ app_path }}
+#
+## TODO find out how not to chown the public folder to get prod assets built
+#- name: Chown public assets back to root
+#  become: true
+#  file:
+#    path: "{{ app_path }}/public"
+#    owner: root
+
+- name: Configure serial port on pi for arduino
+  # http://playground.arduino.cc/Interfacing/LinuxTTY
+  command: stty -F {{ serial_port }} cs8 9600 ignbrk -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke noflsh -ixon -crtscts
+
+- name: create wb-upload upstart template
+  # TODO un-hard-code the app_name wb-upload
+  become: true
+  template: src=../templates/wb-upload.service dest=/etc/systemd/system/wb-upload.service # other args from helper: owner=bin group=wheel mode=0644
+
+# does this need to be a handler?
+- name: restart wb-upload
+  become: true
+  service: name=wb-upload state=reloaded
+  #notify: restart wb-upload

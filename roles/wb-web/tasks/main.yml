@@ -35,7 +35,8 @@
   become: true
   template: src=../templates/wb-web.conf dest=/etc/init/wb-web.conf # other args from helper: owner=bin group=wheel mode=0644
 
+# does this need to be a handler?
 - name: restart wb-web
   become: true
   service: name=wb-web state=reloaded
-  notify: restart wb-web
+  #notify: restart wb-web

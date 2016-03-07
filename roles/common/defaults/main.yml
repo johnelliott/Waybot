@@ -1,2 +1,4 @@
 ---
 # defaults file for common
+nvm_version: v0.31.0
+node_version: v4.3.2

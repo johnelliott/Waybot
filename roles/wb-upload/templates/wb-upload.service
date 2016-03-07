@@ -1,0 +1,12 @@
+[Service]
+ExecStart=/home/{{ app_user }}/.nvm/versions/node/{{ node_version }}/bin/node /home/{{ app_user }}/wb-upload/index.js
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=wb-upload
+User={{ app_user }}
+Group={{ app_user }}
+Environment=NODE_ENV=production PORT={{ app_port }} API_HOST={{ api_host }} SERIALPORT={{ serial_port }}
+
+[Install]
+WantedBy=multi-user.target

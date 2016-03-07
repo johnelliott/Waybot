@@ -1,0 +1,8 @@
+---
+- hosts: edges
+  vars:
+    app_user: pi
+    node_user: pi
+  roles:
+    -  nodejs
+    -  wb-upload

@@ -1,0 +1,10 @@
+---
+# vars file for wb-upload
+app_path: /home/{{ app_user }}/wb-upload
+node_version: v4.3.2
+node_user: pi # TODO this variable is probably not needed and defaults are a bad idea....
+nvm_version: v0.31.0
+app_version: master
+app_port: 3000
+# set api_host as --extra-vars in command-line
+# set serial_port as --extra-vars in command-line
