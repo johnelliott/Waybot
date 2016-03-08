@@ -10,6 +10,7 @@ require("./config");
 var debug = require('debug')('wb-uploader:index');
 // Default to Ras. Pi USB
 var localSerialPort = process.env.SERIALPORT || "/dev/ttyACM0";
+var uploadHost = process.env.API_HOST || "http://localhost:5984/data";
 var http = require('http');
 var Counter = require("./lib/counter");
 var upload = require("./lib/upload");
@@ -20,7 +21,7 @@ var counter = new Counter(localSerialPort, function counterCallback (err, data) 
     }
     debug('Data', data);
     // No cache or db for now, just upload to server
-    upload(data);
+    upload(uploadHost, data);
 
 });
 
