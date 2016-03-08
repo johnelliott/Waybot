@@ -17,7 +17,9 @@ var upload = require("./lib/upload");
 
 var counter = new Counter(localSerialPort, function counterCallback (err, data) {
     if (err) {
-        debug('Error', err);
+        console.log('Error connecting to counter (connect a counter)');
+        debug('Error:', err);
+        process.exit(1);
     }
     debug('Data', data);
     // No cache or db for now, just upload to server
