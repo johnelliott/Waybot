@@ -18,6 +18,13 @@
     path: "{{ app_path }}/public"
     owner: "{{ app_user }}"
 
+- name: Link SSL certs
+  become: true
+  file: state=directory path="/home/{{app_user}}/wb-web/certs"
+  file: state=link src={{ssl_chain_path}} path="/home/{{app_user}}/wb-web/certs/chain.pem"
+  file: state=link src={{ssl_cert_path}} path="/home/{{app_user}}/wb-web/certs/cert.pem"
+  file: state=link src={{ssl_key_path}} path="/home/{{app_user}}/wb-web/certs/privkey.pem"
+
 - name: Build assets
   become: true
   become_user: "{{ app_user }}"
