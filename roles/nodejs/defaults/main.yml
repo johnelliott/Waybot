@@ -1,4 +1,4 @@
 ---
 # defaults file for nodejs
-nvm_version: v0.31.0
-node_version: v6.2.2
+nvm_version: v0.31.6
+node_version: v6.9.0

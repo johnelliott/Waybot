@@ -13,31 +13,28 @@
     line="source ~/.nvm/nvm.sh # loads nvm"
     create=yes
 
-- name: Install node via nvm
+- name: Install node
   # TODO get rid of the warning that sudo causes
-  # simulate login, act as the node app user when installing nvm like a regular user
-  #become: true
-  #become_user: "{{ node_user }}"
-  #become_method: sudo
-  #command: nvm install {{ node_version }}
-
-  #command: sudo -iu {{ node_user }} /home/{{ node_user }}/.nvm/nvm.sh install {{ node_version }}
   command: sudo -iu {{ node_user }} nvm install {{ node_version }}
   # capture installed node version as ansible variable:
   # https://github.com/leonidas/ansible-nvm/blob/master/tasks/main.yml
   register: nvm_install_result
-  changed_when: "'is already installed.' not in nvm_install_result.stdout"
+  changed_when: "'is already installed.' not in nvm_install_result.stderr"
+
 - name: Check if {{ node_version }} is the default node version
   # TODO get rid of the warning that sudo causes
   # simulate login, act as the node app user when checking nvm version like a regular user
-  shell: sudo -iu {{ node_user }} nvm ls | grep -e 'default -> {{ node_version }}'
+  # shell: sudo -iu {{ node_user }} nvm ls | grep -e 'default -> {{ node_version }}'
+  shell: sudo -iu {{ node_user }} nvm ls
   # capture default node version as ansible variable:
   # https://github.com/leonidas/ansible-nvm/blob/master/tasks/main.yml
+
   register: nvm_check_default
-  changed_when: False
+  changed_when: "'default -> {{ node_version }}' in nvm_check_default.stdout"
+  # changed_when: False
   ignore_errors: True
 
 - name: Set default node version to {{ node_version }}
   command: sudo -iu {{ node_user }} nvm alias default {{ node_version }}
   when: nvm_check_default|failed
-  #- fail: msg="FAILLLLLLLLLLLLLLLLLLLLL"
+  # - fail: msg="FAILLLLLLLLLLLLLLLLLLLLL"
