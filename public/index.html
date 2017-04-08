@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Waybot</title>
+    <meta name="theme-color" content="#fffff8">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#fffff8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="Shortcut Icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="tufte.css"/>
+    <link rel="apple-touch-icon" href="images/touch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="images/touch-icon-ipad.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="images/touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="images/touch-icon-ipad-retina.png">
+  </head>
+
+  <body>
+    <article>
+      <h1>Waybot Traffic Counter</h1>
+      <section>
+        <h2>The Project</h2>
+        <p>Waybot is a home-brew traffic counter. The counter can be used with on-board memory or monitored live with a serial cable. A network-edge server and cloud server enable real-time monitoring in a web browser. The servers and apps are configured and deployed via Ansible scripts.</p>
+        <h2>How it works</h2>
+        <p><label for="wb-figure-1" class="margin-toggle">⊕</label>
+        <input type="checkbox" id="wb-figure-1" class="margin-toggle"><span class="marginnote"> <img src="images/1-counter.jpg" alt="Image of a plastic box with plastic bube">The counter: waterpoof case and coiled tube.</span>Bicycles and cars roll over a pneumatic tube connected to an analog pressure sensor. The Arduino samples the voltage drop of the sensor and determines if a vehicle passed over the tube using an algorithm and sends data formatted as JSON for vehicle hits over the Arduino serial cable.</p>
+        <p><label for="wb-figure-2" class="margin-toggle">⊕</label>
+        <input type="checkbox" id="wb-figure-2" class="margin-toggle">
+        <span class="marginnote"> <img src="images/pi.jpg" alt="Image of a chip with wifi dongle">
+          The Raspberry Pi running <a href="https://github.com/johnelliott/wb-upload">wb-upload</a>. Wifi dongle with blue light connects to LAN.
+        </span>A Raspberry Pi acts as a bridge, taking the counter's JSON data from serial and making web requests to a Amazon EC2 server. This EC2 instance stores the data in a database and serves a web app that can sync with the hosted data.</p>
+      </section>
+      <section>
+        <h2>Demo</h2>
+        <p>Simulated data, counter 1 is real data.</p>
+        <div id="root"></div>
+      </section>
+      <section>
+        <h2>Github links</h2>
+        <p><label for="wb-note" class="margin-toggle">⊕</label>Code for this project is on Github in four repsositories.
+        <input type="checkbox" id="wb-note" class="margin-toggle">
+        <span class="marginnote">
+          <a href="https://github.com/johnelliott">johnelliott</a> on Github<h3>
+        </span></p>
+        <h3><a href="https://github.com/johnelliott/wb-web">wb-web</a></h3>
+        <span>This page. A view of Waybot traffic counters using PouchDB, Redux, React, service worker.</span>
+
+        <h3><a href="https://github.com/johnelliott/wb-upload">wb-upload</a></h3>
+        <span>Serial to HTTP bridge for Waybot traffic counter</span>
+
+        <h3><a href="https://github.com/johnelliott/wb-counter">wb-counter</a></h3>
+        <span>Arduino-based pneumatic traffic counter with local cache and JSON output over serial</span>
+
+        <h3><a href="https://github.com/johnelliott/wb-deploy">wb-deploy</a></h3>
+        <span>Bootstrap and deploy commits to AWS and Raspberry Pi using Ansible</span>
+
+      </section>
+    </article>
+  </body>
+  <script src="bundle.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      console.log('registering service worker')
+        navigator.serviceWorker
+        .register('service-worker.js')
+        .then(function(){
+          console.log('service worker registered')
+        })
+    }
+  </script>
+</html>

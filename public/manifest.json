@@ -1,0 +1,42 @@
+{
+  "dir": "ltr",
+  "lang": "en",
+  "name": "Waybot",
+  "short_name": "Waybot",
+  "description": "home-brew traffic counter with cledge data pipeline",
+  "scope": "/",
+  "display": "fullscreen",
+  "orientation": "any",
+  "start_url": "/",
+  "theme_color": "#fffff8",
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "background_color": "#fffff8",
+  "icons": [
+    {
+      "src": "images/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

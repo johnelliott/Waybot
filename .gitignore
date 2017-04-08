@@ -1,9 +1,9 @@
 *.retry
 .DS_Store
-.DS_store
 .editorconfig
 .npmrc
 .nvmrc
 ansible.log
 node_modules
 npm-debug.log
+public/**/*.gz
