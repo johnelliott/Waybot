@@ -6,16 +6,14 @@
 // counter.reset
 // but now I have reset and print-all, so I'll use those
 
-require("./config");
 var debug = require('debug')('wb-uploader:index');
 // Default to Ras. Pi USB
-var localSerialPort = process.env.SERIALPORT || "/dev/ttyACM0";
 var uploadHost = process.env.API_HOST || "http://localhost:5984/data";
 var http = require('http');
 var Counter = require("./lib/counter");
 var upload = require("./lib/upload");
 
-var counter = new Counter(localSerialPort, function counterCallback (err, data) {
+var counter = new Counter(function counterCallback (err, data) {
     if (err) {
         console.log('Error connecting to counter (connect a counter)');
         debug('Error:', err);
