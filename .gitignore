@@ -1,2 +1,5 @@
 .DS_store
-traffic_counter_software_v5/libraries/
+node_modules
+.npmrc
+.nvmrc
+.editorconfig
