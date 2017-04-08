@@ -4,22 +4,29 @@
   "description": "",
   "main": "index.js",
   "engines": {
-    "node": "5.5.0"
+    "node": ">=4",
+    "os" : [ "darwin", "linux" ]
   },
   "dependencies": {
-    "debug": "^2.2.0",
-    "serialport": "^2.0.6"
+    "serialport": "^4.0.7"
   },
-  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnelliott/wb-upload.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "pi": "DEBUG=wb-* SERIALPORT='/dev/ttyACM0' nodemon index.js",
-    "desk": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1421' nodemon --debug-brk index.js",
-    "ddb": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1421' nodemon --debug index.js",
+    "inspect-break": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1431' nodemon --inspect --debug-brk index.js",
+    "inspect": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1431' nodemon --inspect index.js",
     "dbs": "DEBUG=wb-* nodemon index.js",
-    "dbg": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1421' nodemon index.js"
+    "dbg": "DEBUG=wb-* SERIALPORT='/dev/cu.usbmodem1431' nodemon index.js"
   },
   "author": "johnelliott",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "debug": "^2.6.3",
+    "nodemon": "^1.11.0"
+  }
 }

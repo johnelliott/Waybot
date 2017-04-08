@@ -8,10 +8,10 @@
 
 var debug = require('debug')('wb-uploader:index');
 // Default to Ras. Pi USB
-var uploadHost = process.env.API_HOST || "http://localhost:5984/data";
+var host = process.env.API_HOST || "http://localhost:5984/data";
 var http = require('http');
 var Counter = require("./lib/counter");
-var upload = require("./lib/upload");
+var request = require("./lib/request");
 
 var counter = new Counter(function counterCallback (err, data) {
     if (err) {
@@ -21,8 +21,7 @@ var counter = new Counter(function counterCallback (err, data) {
     }
     debug('Data', data);
     // No cache or db for now, just upload to server
-    upload(uploadHost, data);
-
+    request(host).end(JSON.stringify(data));
 });
 
 var server = http.createServer(function requestHandler (req, res) {

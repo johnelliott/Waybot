@@ -4,23 +4,27 @@ var url = require('url');
 var serialPort = require('serialport');
 var debug = require('debug')('serialtest');
 // config
-var localSerialPort = "/dev/cu.usbmodem14121";
-var uploadHost =  "http://localhost:5984/serialtest/";
+var localSerialPort = "/dev/cu.usbmodem1431";
+var uploadHost = "http://localhost:5984/data/";
 
 debug('NOTE THE HARD-CODED PORTS....');
 
 // create serial connection
 var sp = new serialPort.SerialPort(localSerialPort, {
     parser: serialPort.parsers.readline("\n"),
-    baudrate: 9600
-}, true);
+    baudrate: 9600,
+    autoOpen: true
+});
+
+
+// I am not really sure what this file is, see near the bottom...
 
 // wait for connection
 sp.on('open', function openEventHandler () {
     debug("Serial port open", sp.path, sp.isOpen());
     // log out what we get back
     sp.on("data", function(data) {
-        debug("Incoming", typeof data, "->", data);
+        debug("Incoming typeof=", typeof data, "->", data);
         try {
             var jsonData = JSON.parse(data);
         }
