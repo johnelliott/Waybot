@@ -1,0 +1,9 @@
+---
+- hosts: cloud
+  vars:
+    app_user: ubuntu
+    node_user: pi # caught by defaults... maybe bad
+  roles:
+    -  nodejs # TODO do this via dependency in meta/main.yml instead of here
+    -  couch
+    -  wb-web

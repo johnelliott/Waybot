@@ -1,5 +1,9 @@
+*.retry
+.DS_Store
 .DS_store
-node_modules
+.editorconfig
 .npmrc
 .nvmrc
-.editorconfig
+ansible.log
+node_modules
+npm-debug.log

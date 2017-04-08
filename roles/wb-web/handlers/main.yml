@@ -1,0 +1,5 @@
+---
+# handlers file for wb-web
+- name: restart wb-web
+  become: true
+  service: name=wb-web state=restarted
