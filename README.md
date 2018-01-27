@@ -23,7 +23,7 @@ Deploy to a snowflake server with [Waybot deploy](https://github.com/johnelliott
 imagemagick/graphicsmagick for creating assets -> [image-resizer.sh](https://github.com/johnelliott/wb-web/blob/master/image-resizer.sh)
 gzip for the compression npm scripts
 
-# Waybot config with Ansible
+# Waybot config with Ansible (needs update)
 
 ## Use
 Use with ansible 2.0+
@@ -51,4 +51,21 @@ Example playbook run for `edges` raspberry pi uploaders:
 ```bash
 ansible-playbook edges.yml --extra-vars='{"api_host":"http://apihost.cool:1337/api","serial_port":"/dev/ttyACM1"}'
 ```
-can also use extra-vars.json file with `--extra-vars=@extra-vars.json` on the command line
+Can also use extra-vars.json file with `--extra-vars=@extra-vars.json` on the command line
+
+Here's how to specify app version from bash history:
+```bash
+ap cloud.yml --extra-vars='{"app_version":"skeumorphize"}'
+```
+
+wow, so problems in NVM land and NPM module land
+also how to to SSL in a smart way? `server_cert_path`
+
+don't forget to template in symlinks to letsencrypt
+
+# CHIP notes
+ I needed to install wireless tools and do https://github.com/fordsfords/wlan_pwr to try to adjust wlan power for power savings... this may need to go off in production
+
+/dev/ttyACM0 is the usb port with arduino
+chip $ lsusb on the chip confirms
+thirteen $ ap chips.yml --ask-become-pass to start installing node

@@ -1,5 +1,6 @@
 var debug = require('debug')('wb-web:index')
 var fs = require('fs')
+var path = require('path')
 var http = require('http')
 var https = require('https') // TODO use spdy, stock https to help out pouchdb for now...
 var url = require('url')
@@ -10,11 +11,11 @@ var httpPort = process.env.REDIRECT_PORT || 8081
 var httpsPort = process.env.PORT || 8080
 
 // CERTPATH handy to override in development
-var certPath = process.env.CERTPATH || __dirname + '/certs'
+var certPath = process.env.CERTPATH || path.join(__dirname, '/certs')
 
 // HTTPS setup
 var serverOptions = {
-  cert: fs.readFileSync(fs.readlinkSync(certPath + '/cert.pem')),
+  cert: fs.readFileSync(fs.readlinkSync(path.join(certPath, '/cert.pem'))),
   ca: process.NODE_ENV === 'production' ? fs.readFileSync(fs.readlinkSync(certPath + '/chain.pem')) : undefined,
   key: fs.readFileSync(fs.readlinkSync(certPath + '/privkey.pem'))
 }

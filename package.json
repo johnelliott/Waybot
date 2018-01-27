@@ -1,7 +1,7 @@
 {
-  "name": "wb-web",
-  "version": "1.0.0",
-  "description": "web interface for waybot",
+  "name": "waybot",
+  "version": "1.1.0",
+  "description": "web-enabled hardware traffic counter",
   "main": "index.js",
   "scripts": {
     "two-fake-counters": "echo 88 89 |xargs -P 2 -n 1 ./faker.sh",
@@ -23,7 +23,7 @@
   "dependencies": {
     "debug": "^2.2.0",
     "deep-freeze": "0.0.1",
-    "ecstatic": "^1.4.0",
+    "ecstatic": "^3.1.1",
     "pouchdb": "^5.2.1",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
