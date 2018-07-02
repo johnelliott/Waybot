@@ -1,6 +1,6 @@
 # Waybot 📈
 
-A web app to monitor sensor data form [Waybot traffic counter](https://github.com/johnelliott/wb-counter). See it live [here](https://waybot.primitivemachine.com).
+A web app to monitor sensor data form [Waybot traffic counter](https://github.com/johnelliott/wb-counter).
 
 ### About
 This app tries to load fast by using small assets, compression and some initial markup and CSS before the react app starts. A service worker caches assets on supported clients.
