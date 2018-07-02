@@ -1,4 +1,4 @@
-# [Waybot 📈](https://waybot.primitivemachine.com)
+# Waybot 📈
 
 A web app to monitor sensor data form [Waybot traffic counter](https://github.com/johnelliott/wb-counter). See it live [here](https://waybot.primitivemachine.com).
 
